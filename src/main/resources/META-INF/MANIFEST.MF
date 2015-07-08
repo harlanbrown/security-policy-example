@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Bundle-Name: org.nuxeo.sample.securitypolicy
+Nuxeo-Component: OSGI-INF/security-policy-contrib.xml
+Bundle-SymbolicName: org.nuxeo.sample.securitypolicy;singleton:=true
+
