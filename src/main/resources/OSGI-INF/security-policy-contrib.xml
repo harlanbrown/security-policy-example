@@ -2,7 +2,7 @@
 <component name="org.nuxeo.sample.securitypolicy.contrib">
 
   <extension target="org.nuxeo.ecm.core.security.SecurityService" point="policies">
-    <policy name="noitar" class="org.nuxeo.sample.NoItarSecurityPolicy" />
+    <policy name="expired" class="org.nuxeo.sample.DcExpiredSecurityPolicy" />
   </extension>
 
 </component>

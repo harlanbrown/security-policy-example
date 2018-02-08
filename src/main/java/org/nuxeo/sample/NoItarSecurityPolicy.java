@@ -16,7 +16,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.nuxeo.ecm.core.api.CoreSession;
-import org.nuxeo.ecm.core.api.DocumentException;
 import org.nuxeo.ecm.core.api.NuxeoPrincipal;
 import org.nuxeo.ecm.core.api.security.ACP;
 import org.nuxeo.ecm.core.api.security.Access;
@@ -61,7 +60,7 @@ public class NoItarSecurityPolicy extends AbstractSecurityPolicy implements Secu
                     }
                 } 
 
-            } catch (DocumentException e){
+            } catch (Exception e){
                 log.error(e.toString());
             }
         }
