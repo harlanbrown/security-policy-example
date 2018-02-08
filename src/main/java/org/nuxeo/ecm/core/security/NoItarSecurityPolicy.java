@@ -74,7 +74,7 @@ public class NoItarSecurityPolicy extends AbstractSecurityPolicy implements Secu
     }
 
     @Override
-    public boolean isExpressibleInQuery() {
+    public boolean isExpressibleInQuery(String repositoryName) {
         return true;
     }
 
@@ -136,7 +136,7 @@ public class NoItarSecurityPolicy extends AbstractSecurityPolicy implements Secu
     public static final Transformer NO_ITAR_TRANSFORMER = new NoItarTransformer();
 
     @Override
-    public Transformer getQueryTransformer() {
+    public Transformer getQueryTransformer(String repositoryName) {
         return NO_ITAR_TRANSFORMER;
     }
 
