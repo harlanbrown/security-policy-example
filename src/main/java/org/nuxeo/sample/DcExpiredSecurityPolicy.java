@@ -114,9 +114,7 @@ public class DcExpiredSecurityPolicy extends AbstractSecurityPolicy implements S
                 predicate = new Predicate(where.predicate, Operator.AND, new Predicate(expr, Operator.NOT, null));
             }
 
-            SQLQuery newQuery = new SQLQuery(query.select, query.from, new WhereClause(predicate), query.groupBy, query.having, query.orderBy, query.limit, query.offset);
-            log.trace(newQuery);
-            return newQuery;
+            return new SQLQuery(query.select, query.from, new WhereClause(predicate), query.groupBy, query.having, query.orderBy, query.limit, query.offset);
 
         }
     }
