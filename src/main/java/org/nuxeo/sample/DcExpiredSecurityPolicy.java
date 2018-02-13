@@ -21,9 +21,8 @@ package org.nuxeo.sample;
 
 import java.security.Principal;
 import java.util.Calendar;
+
 import org.joda.time.DateTime;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import org.nuxeo.ecm.core.api.security.ACP;
 import org.nuxeo.ecm.core.api.security.Access;
@@ -43,28 +42,20 @@ public class DcExpiredSecurityPolicy extends AbstractSecurityPolicy implements S
 
     public static final String DC_EXPIRED_FIELD = "dc:expired";
 
-    private static final Log log = LogFactory.getLog(DcExpiredSecurityPolicy.class);
-
     @Override
     public Access checkPermission(Document doc, ACP mergedAcp, Principal principal, String permission,
             String[] resolvedPermissions, String[] additionalPrincipals) {
-
+    	
         Calendar expired = (Calendar) doc.getPropertyValue(DC_EXPIRED_FIELD);
         Calendar now = Calendar.getInstance();
 
-    	try {
-            if ( expired != null ) {
-                // if value of dc:expired field is before now
-            	if (expired.before(now)) {
-                    // DENY access to the item
-                    return Access.DENY;
-            	}
-            } 
-
-        } catch (Exception e){
-            log.error(e.toString());
+        if ( expired != null ) {
+            // if value of dc:expired field is before now
+            if (expired.before(now)) {
+                // DENY access to the item
+                return Access.DENY;
+            }
         }
-
         return Access.UNKNOWN;
     }
 
@@ -114,9 +105,7 @@ public class DcExpiredSecurityPolicy extends AbstractSecurityPolicy implements S
                 predicate = new Predicate(where.predicate, Operator.AND, new Predicate(expr, Operator.NOT, null));
             }
 
-            SQLQuery newQuery = new SQLQuery(query.select, query.from, new WhereClause(predicate), query.groupBy, query.having, query.orderBy, query.limit, query.offset);
-            log.trace(newQuery);
-            return newQuery;
+            return new SQLQuery(query.select, query.from, new WhereClause(predicate), query.groupBy, query.having, query.orderBy, query.limit, query.offset);
 
         }
     }
