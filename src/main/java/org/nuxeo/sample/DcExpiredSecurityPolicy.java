@@ -22,11 +22,7 @@ package org.nuxeo.sample;
 import java.security.Principal;
 import java.util.Calendar;
 
-import javax.mail.Session;
-
 import org.joda.time.DateTime;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import org.nuxeo.ecm.core.api.security.ACP;
 import org.nuxeo.ecm.core.api.security.Access;
@@ -45,8 +41,6 @@ import org.nuxeo.ecm.core.security.SecurityPolicy;
 public class DcExpiredSecurityPolicy extends AbstractSecurityPolicy implements SecurityPolicy {
 
     public static final String DC_EXPIRED_FIELD = "dc:expired";
-
-    private static final Log log = LogFactory.getLog(DcExpiredSecurityPolicy.class);
 
     @Override
     public Access checkPermission(Document doc, ACP mergedAcp, Principal principal, String permission,
