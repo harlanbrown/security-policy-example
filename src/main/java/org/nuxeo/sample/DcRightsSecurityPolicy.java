@@ -55,7 +55,6 @@ public class DcRightsSecurityPolicy extends AbstractSecurityPolicy implements Se
     
     private static final Log log = LogFactory.getLog(DcRightsSecurityPolicy.class);
 
-
     @Override
     public Access checkPermission(Document doc, ACP mergedAcp, Principal principal, String permission,
             String[] resolvedPermissions, String[] additionalPrincipals) {
@@ -81,23 +80,27 @@ public class DcRightsSecurityPolicy extends AbstractSecurityPolicy implements Se
         if ( rights != null ) {
             
         	if (rights.equals(RIGHTS_DEFAULT) && p.isMemberOf(PRINCIPAL_GROUP1)) {
+        		log.trace(String.format("Returning access %s for user %s on document %s", Access.GRANT, p, doc));
                 return Access.GRANT;
             }
             
             if (rights.equals(RIGHTS_GROUP1) && p.isMemberOf(PRINCIPAL_GROUP1)) {
+        		log.trace(String.format("Returning access %s for user %s on document %s", Access.GRANT, p, doc));
                 return Access.GRANT;
             }
             
             if (rights.equals(RIGHTS_GROUP2) && p.isMemberOf(PRINCIPAL_GROUP2)) {
+        		log.trace(String.format("Returning access %s for user %s on document %s", Access.GRANT, p, doc));
                 return Access.GRANT;
             }
             
             if (rights.equals(RIGHTS_GROUP3) && p.isMemberOf(PRINCIPAL_GROUP3)) {
+        		log.trace(String.format("Returning access %s for user %s on document %s", Access.GRANT, p, doc));
                 return Access.GRANT;
             }
             
         }
-        
+		log.trace(String.format("Returning access %s for user %s on document %s", Access.UNKNOWN, p, doc));
         return Access.UNKNOWN;
         
     }
@@ -136,7 +139,7 @@ public class DcRightsSecurityPolicy extends AbstractSecurityPolicy implements Se
         	// if principal in group 1 return query checking if field = default
         	if (p.isMemberOf(PRINCIPAL_GROUP1)) {
         		// AND (dc:rights IS NULL OR dc:rights IN ('DEFAULT','GROUP1'))
-        		Expression expr = new Expression(new Reference(DC_RIGHTS_FIELD), Operator.ISNOTNULL, null);
+        		Expression expr = new Expression(new Reference(DC_RIGHTS_FIELD), Operator.ISNULL, null);
                 LiteralList list = new LiteralList();
                 list.add(new StringLiteral(RIGHTS_DEFAULT));
                 list.add(new StringLiteral(RIGHTS_GROUP1));
@@ -146,14 +149,14 @@ public class DcRightsSecurityPolicy extends AbstractSecurityPolicy implements Se
         	// if principal in group 2 return query checking if field = group2
         	else if (p.isMemberOf(PRINCIPAL_GROUP2)) {
         		// AND (dc:rights IS NULL OR dc:rights = 'GROUP2')
-        		Expression expr = new Expression(new Reference(DC_RIGHTS_FIELD), Operator.ISNOTNULL, null);
+        		Expression expr = new Expression(new Reference(DC_RIGHTS_FIELD), Operator.ISNULL, null);
         		Expression expr2 = new Expression(new Reference(DC_RIGHTS_FIELD), Operator.EQ, new StringLiteral(RIGHTS_GROUP2));
         		predicate = new Predicate(expr, Operator.OR, expr2);
         	}
         	// if principal in group 3 return query checking if field = group3
         	else if (p.isMemberOf(PRINCIPAL_GROUP3)) {
         		// AND (dc:rights IS NULL OR dc:rights = 'GROUP3')
-        		Expression expr = new Expression(new Reference(DC_RIGHTS_FIELD), Operator.ISNOTNULL, null);
+        		Expression expr = new Expression(new Reference(DC_RIGHTS_FIELD), Operator.ISNULL, null);
         		Expression expr2 = new Expression(new Reference(DC_RIGHTS_FIELD), Operator.EQ, new StringLiteral(RIGHTS_GROUP3));
         		predicate = new Predicate(expr, Operator.OR, expr2);
         	} 

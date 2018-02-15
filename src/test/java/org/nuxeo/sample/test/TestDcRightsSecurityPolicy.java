@@ -4,32 +4,20 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 
-import static org.nuxeo.ecm.core.api.security.Access.DENY;
 import static org.nuxeo.ecm.core.api.security.Access.GRANT;
 import static org.nuxeo.ecm.core.api.security.Access.UNKNOWN;
 import static org.nuxeo.ecm.core.api.security.SecurityConstants.READ;
-
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.nuxeo.ecm.core.api.AbstractSession;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
-import org.nuxeo.ecm.core.api.DocumentModelList;
-import org.nuxeo.ecm.core.api.NuxeoGroup;
-import org.nuxeo.ecm.core.api.NuxeoPrincipal;
-import org.nuxeo.ecm.core.api.impl.UserPrincipal;
-import org.nuxeo.ecm.core.api.security.ACE;
-import org.nuxeo.ecm.core.api.security.ACL;
-import org.nuxeo.ecm.core.api.security.ACP;
 import org.nuxeo.ecm.core.model.Document;
 import org.nuxeo.ecm.core.model.Session;
 import org.nuxeo.ecm.core.query.sql.SQLQueryParser;
@@ -44,6 +32,7 @@ import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
 import org.nuxeo.runtime.test.runner.LocalDeploy;
+import org.nuxeo.sample.DcRightsSecurityPolicy.DcRightsTransformer;
 import org.nuxeo.ecm.platform.usermanager.UserManager;
 
 @RunWith(FeaturesRunner.class)
@@ -71,41 +60,45 @@ public class TestDcRightsSecurityPolicy {
     @Before
     public void setUp() {
     	try (CoreSession coreSession = coreFeature.openCoreSession("system")) {
-        DocumentModel root = coreSession.getRootDocument();
-        ACP rootACP = root.getACP();
-        rootACP.removeACEsByUsername("members");
-        root.setACP(rootACP, true);
-        coreSession.save();
-        
-    	DocumentModel doc = coreSession.createDocumentModel("/", "default", "File");
-    	doc.setPropertyValue("dc:rights", "DEFAULT");
-    	doc = coreSession.createDocument(doc);
-    	id1 = doc.getId();
-    	DocumentModel doc2 = coreSession.createDocumentModel("/", "group1", "File");
-    	doc2.setPropertyValue("dc:rights", "GROUP1");
-    	doc2 = coreSession.createDocument(doc2);
-    	id2 = doc2.getId();
-    	DocumentModel doc3 = coreSession.createDocumentModel("/", "group2", "File");
-    	doc3.setPropertyValue("dc:rights", "GROUP2");
-    	doc3 = coreSession.createDocument(doc3);
-    	id3 = doc3.getId();
-    	DocumentModel doc4 = coreSession.createDocumentModel("/", "group3", "File");
-    	doc4.setPropertyValue("dc:rights", "GROUP3");
-    	doc4 = coreSession.createDocument(doc4);
-    	id4 = doc4.getId();
-    	coreSession.save();
+    		
+    		DocumentModel ws1 = coreSession.createDocumentModel("/default-domain/workspaces", "ws1", "Workspace");
+	    	ws1 = coreSession.createDocument(ws1);
+	    	
+	    	DocumentModel doc = coreSession.createDocumentModel("/default-domain/workspaces/ws1", "default", "File");
+	    	doc.setPropertyValue("dc:rights", "DEFAULT");
+	    	doc = coreSession.createDocument(doc);
+	    	id1 = doc.getId();
+	    	
+	    	DocumentModel doc2 = coreSession.createDocumentModel("/default-domain/workspaces/ws1", "group1", "File");
+	    	doc2.setPropertyValue("dc:rights", "GROUP1");
+	    	doc2 = coreSession.createDocument(doc2);
+	    	id2 = doc2.getId();
+	    	
+	    	DocumentModel doc3 = coreSession.createDocumentModel("/default-domain/workspaces/ws1", "group2", "File");
+	    	doc3.setPropertyValue("dc:rights", "GROUP2");
+	    	doc3 = coreSession.createDocument(doc3);
+	    	id3 = doc3.getId();
+	    	
+	    	DocumentModel doc4 = coreSession.createDocumentModel("/default-domain/workspaces/ws1", "group3", "File");
+	    	doc4.setPropertyValue("dc:rights", "GROUP3");
+	    	doc4 = coreSession.createDocument(doc4);
+	    	id4 = doc4.getId();
+	    	
+	    	coreSession.save();
     	}    	
     }
     
     @Test
     public void testQuery() throws Exception {
-        
-    	// user3 should have access one document out of the four created in setUp
-    	try (CoreSession coreSession = coreFeature.openCoreSession("user3")) {
-        	DocumentModelList l = coreSession.query("SELECT * FROM File");
-        	assertEquals(1,l.size());
+
+    	// user1 should have access to two documents out of the four created in setUp
+    	try (CoreSession coreSession = coreFeature.openCoreSession(userManager.getPrincipal("user1"))) {
+        	assertEquals(2,coreSession.query("SELECT * FROM File").size());
         }
-        
+    	// user3 should have access to one document out of the four created in setUp
+    	try (CoreSession coreSession = coreFeature.openCoreSession(userManager.getPrincipal("user3"))) {
+        	assertEquals(1,coreSession.query("SELECT * FROM File").size());
+        }
     }
     
     @Test
@@ -164,6 +157,18 @@ public class TestDcRightsSecurityPolicy {
     
     @Test
     public void testTransformer() throws Exception {
+    	Transformer t = new DcRightsTransformer();
+    	SQLQuery p = SQLQueryParser.parse("SELECT * FROM File");
+    	SQLQuery s = t.transform(userManager.getPrincipal("user1"), p);
+    	assertTrue(s.toString().contains("WHERE dc:rights IS NULL"));
+    	assertTrue(s.toString().contains("DEFAULT"));    	
+    	assertTrue(s.toString().contains("GROUP1"));
     	
+    	s = t.transform(userManager.getPrincipal("user3"), p);
+    	assertTrue(s.toString().contains("WHERE dc:rights IS NULL"));
+    	assertFalse(s.toString().contains("DEFAULT"));    	
+    	assertFalse(s.toString().contains("GROUP1"));
+    	assertTrue(s.toString().contains("GROUP3"));
     }
+    
 }
