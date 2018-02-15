@@ -79,26 +79,43 @@ public class DcRightsSecurityPolicy extends AbstractSecurityPolicy implements Se
 
         if ( rights != null ) {
             
-        	if (rights.equals(RIGHTS_DEFAULT) && p.isMemberOf(PRINCIPAL_GROUP1)) {
-        		log.trace(String.format("Returning access %s for user %s on document %s", Access.GRANT, p, doc));
-                return Access.GRANT;
-            }
+        	if (rights.equals(RIGHTS_DEFAULT)) {
+        		if (p.isMemberOf(PRINCIPAL_GROUP1)) {
+        			log.trace(String.format("Returning access %s for user %s on document %s", Access.GRANT, p, doc));
+        			return Access.GRANT;
+        		} else {
+        			log.trace(String.format("Returning access %s for user %s on document %s", Access.DENY, p, doc));
+        			return Access.DENY;
+        		}           
+        	} 
             
-            if (rights.equals(RIGHTS_GROUP1) && p.isMemberOf(PRINCIPAL_GROUP1)) {
-        		log.trace(String.format("Returning access %s for user %s on document %s", Access.GRANT, p, doc));
-                return Access.GRANT;
+            if (rights.equals(RIGHTS_GROUP1)) {
+        		if (p.isMemberOf(PRINCIPAL_GROUP1)) {
+        			log.trace(String.format("Returning access %s for user %s on document %s", Access.GRANT, p, doc));
+        			return Access.GRANT;
+        		} else {
+        			log.trace(String.format("Returning access %s for user %s on document %s", Access.DENY, p, doc));
+        			return Access.DENY;
+        		}            	
             }
-            
-            if (rights.equals(RIGHTS_GROUP2) && p.isMemberOf(PRINCIPAL_GROUP2)) {
-        		log.trace(String.format("Returning access %s for user %s on document %s", Access.GRANT, p, doc));
-                return Access.GRANT;
+            if (rights.equals(RIGHTS_GROUP2)) {
+        		if (p.isMemberOf(PRINCIPAL_GROUP2)) {
+        			log.trace(String.format("Returning access %s for user %s on document %s", Access.GRANT, p, doc));
+        			return Access.GRANT;
+        		} else {
+        			log.trace(String.format("Returning access %s for user %s on document %s", Access.DENY, p, doc));
+        			return Access.DENY;
+        		}           
             }
-            
-            if (rights.equals(RIGHTS_GROUP3) && p.isMemberOf(PRINCIPAL_GROUP3)) {
-        		log.trace(String.format("Returning access %s for user %s on document %s", Access.GRANT, p, doc));
-                return Access.GRANT;
+            if (rights.equals(RIGHTS_GROUP3)) {
+        		if (p.isMemberOf(PRINCIPAL_GROUP3)) {
+        			log.trace(String.format("Returning access %s for user %s on document %s", Access.GRANT, p, doc));
+        			return Access.GRANT;
+        		} else {
+        			log.trace(String.format("Returning access %s for user %s on document %s", Access.DENY, p, doc));
+        			return Access.DENY;
+        		}           
             }
-            
         }
 		log.trace(String.format("Returning access %s for user %s on document %s", Access.UNKNOWN, p, doc));
         return Access.UNKNOWN;
