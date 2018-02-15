@@ -5,8 +5,8 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 
+import static org.nuxeo.ecm.core.api.security.Access.DENY;
 import static org.nuxeo.ecm.core.api.security.Access.GRANT;
-import static org.nuxeo.ecm.core.api.security.Access.UNKNOWN;
 import static org.nuxeo.ecm.core.api.security.SecurityConstants.READ;
 
 import javax.inject.Inject;
@@ -116,39 +116,39 @@ public class TestDcRightsSecurityPolicy {
         	assertSame(GRANT, service.checkPermission(d2, null, userManager.getPrincipal("user1"), permission, permissions, null));
         	
         	Document d3 = documentSession.getDocumentByUUID(id3);
-        	assertSame(UNKNOWN, service.checkPermission(d3, null, userManager.getPrincipal("user1"), permission, permissions, null));
+        	assertSame(DENY, service.checkPermission(d3, null, userManager.getPrincipal("user1"), permission, permissions, null));
         	
         	Document d4 = documentSession.getDocumentByUUID(id4);
-        	assertSame(UNKNOWN, service.checkPermission(d4, null, userManager.getPrincipal("user1"), permission, permissions, null));
+        	assertSame(DENY, service.checkPermission(d4, null, userManager.getPrincipal("user1"), permission, permissions, null));
         }
         
         try (CoreSession coreSession = coreFeature.openCoreSession("user2")) {
         	Session documentSession = ((AbstractSession) coreSession).getSession();
 
         	Document d = documentSession.getDocumentByUUID(id1);
-        	assertSame(UNKNOWN, service.checkPermission(d, null, userManager.getPrincipal("user2"), permission, permissions, null));
+        	assertSame(DENY, service.checkPermission(d, null, userManager.getPrincipal("user2"), permission, permissions, null));
             
         	Document d2 = documentSession.getDocumentByUUID(id2);
-        	assertSame(UNKNOWN, service.checkPermission(d2, null, userManager.getPrincipal("user2"), permission, permissions, null));
+        	assertSame(DENY, service.checkPermission(d2, null, userManager.getPrincipal("user2"), permission, permissions, null));
         	
         	Document d3 = documentSession.getDocumentByUUID(id3);
         	assertSame(GRANT, service.checkPermission(d3, null, userManager.getPrincipal("user2"), permission, permissions, null));
         	
         	Document d4 = documentSession.getDocumentByUUID(id4);
-        	assertSame(UNKNOWN, service.checkPermission(d4, null, userManager.getPrincipal("user2"), permission, permissions, null));
+        	assertSame(DENY, service.checkPermission(d4, null, userManager.getPrincipal("user2"), permission, permissions, null));
         }
         
         try (CoreSession coreSession = coreFeature.openCoreSession("user3")) {
         	Session documentSession = ((AbstractSession) coreSession).getSession();
 
         	Document d = documentSession.getDocumentByUUID(id1);
-        	assertSame(UNKNOWN, service.checkPermission(d, null, userManager.getPrincipal("user3"), permission, permissions, null));
+        	assertSame(DENY, service.checkPermission(d, null, userManager.getPrincipal("user3"), permission, permissions, null));
             
         	Document d2 = documentSession.getDocumentByUUID(id2);
-        	assertSame(UNKNOWN, service.checkPermission(d2, null, userManager.getPrincipal("user3"), permission, permissions, null));
+        	assertSame(DENY, service.checkPermission(d2, null, userManager.getPrincipal("user3"), permission, permissions, null));
         	
         	Document d3 = documentSession.getDocumentByUUID(id3);
-        	assertSame(UNKNOWN, service.checkPermission(d3, null, userManager.getPrincipal("user3"), permission, permissions, null));
+        	assertSame(DENY, service.checkPermission(d3, null, userManager.getPrincipal("user3"), permission, permissions, null));
         	
         	Document d4 = documentSession.getDocumentByUUID(id4);
         	assertSame(GRANT, service.checkPermission(d4, null, userManager.getPrincipal("user3"), permission, permissions, null));
