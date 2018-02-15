@@ -1,9 +1,7 @@
 # security-policy-example
 Nuxeo Security Policy Example
 
-
-### To build
-
+#### To build (using [Maven](http://maven.apache.org/))
 ```
 git clone git clone git@github.com:harlanbrown/security-policy-example.git
 cd security-policy-example
