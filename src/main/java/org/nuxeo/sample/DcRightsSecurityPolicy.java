@@ -56,7 +56,7 @@ public class DcRightsSecurityPolicy extends AbstractSecurityPolicy implements Se
     private static final Log log = LogFactory.getLog(DcRightsSecurityPolicy.class);
 
     @Override
-    public Access checkPermission(Document doc, ACP mergedAcp, Principal principal, String permission,
+    public Access checkPermission(Document doc, ACP mergedAcp, NuxeoPrincipal principal, String permission,
             String[] resolvedPermissions, String[] additionalPrincipals) {
     	NuxeoPrincipal p = (NuxeoPrincipal) principal;
     	/*
@@ -139,7 +139,7 @@ public class DcRightsSecurityPolicy extends AbstractSecurityPolicy implements Se
         // A SQL Query is made whenever a document listing is shown
         // This transformer changes the SQL query so that restricted documents are not shown in results
         @Override
-        public SQLQuery transform(Principal principal, SQLQuery query) {
+        public SQLQuery transform(NuxeoPrincipal principal, SQLQuery query) {
         	
         	UserManager userManager = Framework.getService(UserManager.class);
         	// cannot get groups from incoming principal object, need to fetch a NuxeoPrincipalImpl from user manager

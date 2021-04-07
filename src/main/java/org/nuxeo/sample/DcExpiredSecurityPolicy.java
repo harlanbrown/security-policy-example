@@ -24,6 +24,7 @@ import java.util.Calendar;
 
 import org.joda.time.DateTime;
 
+import org.nuxeo.ecm.core.api.NuxeoPrincipal;
 import org.nuxeo.ecm.core.api.security.ACP;
 import org.nuxeo.ecm.core.api.security.Access;
 import org.nuxeo.ecm.core.model.Document;
@@ -43,7 +44,7 @@ public class DcExpiredSecurityPolicy extends AbstractSecurityPolicy implements S
     public static final String DC_EXPIRED_FIELD = "dc:expired";
 
     @Override
-    public Access checkPermission(Document doc, ACP mergedAcp, Principal principal, String permission,
+    public Access checkPermission(Document doc, ACP mergedAcp, NuxeoPrincipal principal, String permission,
             String[] resolvedPermissions, String[] additionalPrincipals) {
     	
         Calendar expired = (Calendar) doc.getPropertyValue(DC_EXPIRED_FIELD);
@@ -82,7 +83,7 @@ public class DcExpiredSecurityPolicy extends AbstractSecurityPolicy implements S
         // A SQL Query is made whenever a document listing is shown
         // This transformer changes the SQL query so that restricted documents are not shown in results
         @Override
-        public SQLQuery transform(Principal principal, SQLQuery query) {
+        public SQLQuery transform(NuxeoPrincipal principal, SQLQuery query) {
 
             // if user is system or Admin do nothing
             if (principal.getName().equals("system") || principal.getName().equals("Administrator")){

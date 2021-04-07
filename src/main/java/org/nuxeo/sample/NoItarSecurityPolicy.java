@@ -40,7 +40,7 @@ public class NoItarSecurityPolicy extends AbstractSecurityPolicy implements Secu
     private static final Log log = LogFactory.getLog(NoItarSecurityPolicy.class);
 
     @Override
-    public Access checkPermission(Document doc, ACP mergedAcp, Principal principal, String permission,
+    public Access checkPermission(Document doc, ACP mergedAcp, NuxeoPrincipal principal, String permission,
             String[] resolvedPermissions, String[] additionalPrincipals) {
 
         // if document is of type FILE
@@ -93,7 +93,7 @@ public class NoItarSecurityPolicy extends AbstractSecurityPolicy implements Secu
         // A SQL Query is made whenever a document listing is shown
         // This transformer changes the SQL query so that restricted documents are not shown in results
         @Override
-        public SQLQuery transform(Principal principal, SQLQuery query) {
+        public SQLQuery transform(NuxeoPrincipal principal, SQLQuery query) {
 
             // if user is system or Admin do nothing
             if (principal.getName().equals("system") || principal.getName().equals("Administrator")){

@@ -16,6 +16,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.nuxeo.ecm.core.api.AbstractSession;
+import org.nuxeo.ecm.core.api.CloseableCoreSession;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.model.Document;
@@ -59,7 +60,7 @@ public class TestDcRightsSecurityPolicy {
 
     @Before
     public void setUp() {
-    	try (CoreSession coreSession = coreFeature.openCoreSession("system")) {
+    	try (CloseableCoreSession coreSession = coreFeature.openCoreSessionSystem()) {
     		
     		DocumentModel ws1 = coreSession.createDocumentModel("/default-domain/workspaces", "ws1", "Workspace");
 	    	ws1 = coreSession.createDocument(ws1);
@@ -92,11 +93,11 @@ public class TestDcRightsSecurityPolicy {
     public void testQuery() throws Exception {
 
     	// user1 should have access to two documents out of the four created in setUp
-    	try (CoreSession coreSession = coreFeature.openCoreSession(userManager.getPrincipal("user1"))) {
+    	try (CloseableCoreSession coreSession = coreFeature.openCoreSession(userManager.getPrincipal("user1"))) {
         	assertEquals(2,coreSession.query("SELECT * FROM File").size());
         }
     	// user3 should have access to one document out of the four created in setUp
-    	try (CoreSession coreSession = coreFeature.openCoreSession(userManager.getPrincipal("user3"))) {
+    	try (CloseableCoreSession coreSession = coreFeature.openCoreSession(userManager.getPrincipal("user3"))) {
         	assertEquals(1,coreSession.query("SELECT * FROM File").size());
         }
     }
@@ -106,7 +107,7 @@ public class TestDcRightsSecurityPolicy {
     	String permission = READ;
         String[] permissions = { READ };
 
-        try (CoreSession coreSession = coreFeature.openCoreSession("user1")) {
+        try (CloseableCoreSession coreSession = coreFeature.openCoreSession("user1")) {
         	Session documentSession = ((AbstractSession) coreSession).getSession();
 
         	Document d = documentSession.getDocumentByUUID(id1);
@@ -122,7 +123,7 @@ public class TestDcRightsSecurityPolicy {
         	assertSame(DENY, service.checkPermission(d4, null, userManager.getPrincipal("user1"), permission, permissions, null));
         }
         
-        try (CoreSession coreSession = coreFeature.openCoreSession("user2")) {
+        try (CloseableCoreSession coreSession = coreFeature.openCoreSession("user2")) {
         	Session documentSession = ((AbstractSession) coreSession).getSession();
 
         	Document d = documentSession.getDocumentByUUID(id1);
@@ -138,7 +139,7 @@ public class TestDcRightsSecurityPolicy {
         	assertSame(DENY, service.checkPermission(d4, null, userManager.getPrincipal("user2"), permission, permissions, null));
         }
         
-        try (CoreSession coreSession = coreFeature.openCoreSession("user3")) {
+        try (CloseableCoreSession coreSession = coreFeature.openCoreSession("user3")) {
         	Session documentSession = ((AbstractSession) coreSession).getSession();
 
         	Document d = documentSession.getDocumentByUUID(id1);

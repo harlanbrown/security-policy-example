@@ -16,8 +16,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nuxeo.ecm.core.api.AbstractSession;
+import org.nuxeo.ecm.core.api.CloseableCoreSession;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.NuxeoPrincipal;
 import org.nuxeo.ecm.core.api.impl.UserPrincipal;
 import org.nuxeo.ecm.core.model.Document;
 import org.nuxeo.ecm.core.model.Session;
@@ -46,7 +48,7 @@ import org.nuxeo.sample.DcExpiredSecurityPolicy.DcExpiredTransformer;
 public class TestDcExpiredSecurityPolicy {
 
     static final String members = "members";
-	static final Principal membersPrincipal = new UserPrincipal(members, new ArrayList<>(), false, false);
+	static final NuxeoPrincipal membersPrincipal = new UserPrincipal(members, new ArrayList<>(), false, false);
 	
     protected DocumentModel doc;
     protected DocumentModel doc2;
@@ -83,11 +85,11 @@ public class TestDcExpiredSecurityPolicy {
     @Test
     public void testQuery() throws Exception {
     	
-        try (CoreSession coreSession = coreFeature.openCoreSession("Administrator")) {
+        try (CloseableCoreSession coreSession = coreFeature.openCoreSession("Administrator")) {
         	assertEquals(2,coreSession.query("SELECT * FROM File").size());
         }
         
-        try (CoreSession coreSession = coreFeature.openCoreSession("members")) {
+        try (CloseableCoreSession coreSession = coreFeature.openCoreSession("members")) {
         	assertEquals(1,coreSession.query("SELECT * FROM File").size());
         }
     	
@@ -99,7 +101,7 @@ public class TestDcExpiredSecurityPolicy {
     	String permission = READ;
         String[] permissions = { READ };
 
-        try (CoreSession coreSession = coreFeature.openCoreSession("members")) {
+        try (CloseableCoreSession coreSession = coreFeature.openCoreSession("members")) {
         	Session documentSession = ((AbstractSession) coreSession).getSession();
 
         	Document d = documentSession.getDocumentByUUID(doc.getId());
