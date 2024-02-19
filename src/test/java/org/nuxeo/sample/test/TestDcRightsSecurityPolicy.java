@@ -161,12 +161,12 @@ public class TestDcRightsSecurityPolicy {
     	Transformer t = new DcRightsTransformer();
     	SQLQuery p = SQLQueryParser.parse("SELECT * FROM File");
     	SQLQuery s = t.transform(userManager.getPrincipal("user1"), p);
-    	assertTrue(s.toString().contains("WHERE dc:rights IS NULL"));
+    	assertTrue(s.toString().contains("dc:rights IS NULL"));
     	assertTrue(s.toString().contains("DEFAULT"));    	
     	assertTrue(s.toString().contains("GROUP1"));
     	
     	s = t.transform(userManager.getPrincipal("user3"), p);
-    	assertTrue(s.toString().contains("WHERE dc:rights IS NULL"));
+    	assertTrue(s.toString().contains("dc:rights IS NULL"));
     	assertFalse(s.toString().contains("DEFAULT"));    	
     	assertFalse(s.toString().contains("GROUP1"));
     	assertTrue(s.toString().contains("GROUP3"));

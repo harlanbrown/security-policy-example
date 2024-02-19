@@ -119,7 +119,7 @@ public class TestDcExpiredSecurityPolicy {
     	Transformer t = new DcExpiredTransformer();
     	SQLQuery p = SQLQueryParser.parse("SELECT * FROM File");
     	SQLQuery s = t.transform(membersPrincipal, p);
-    	assertTrue(s.toString().contains("WHERE NOT dc:expired < TIMESTAMP"));
+    	assertTrue(s.toString().contains("WHERE NOT ((dc:expired < TIMESTAMP"));
     	assertTrue(s.toString().contains("AND dc:expired IS NOT NULL"));
     	
     }

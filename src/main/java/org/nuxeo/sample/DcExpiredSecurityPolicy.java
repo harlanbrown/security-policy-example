@@ -22,7 +22,8 @@ package org.nuxeo.sample;
 import java.security.Principal;
 import java.util.Calendar;
 
-import org.joda.time.DateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
 import org.nuxeo.ecm.core.api.NuxeoPrincipal;
 import org.nuxeo.ecm.core.api.security.ACP;
@@ -77,7 +78,7 @@ public class DcExpiredSecurityPolicy extends AbstractSecurityPolicy implements S
         // Expressions for two parameters, we need to check that:
         // * dc:expired value is less than todays date
         // * dc:expired value is not null
-        public static final Expression EXPIRED = new Expression(new Reference(DC_EXPIRED_FIELD), Operator.LT, new DateLiteral(new DateTime())); 
+        public static final Expression EXPIRED = new Expression(new Reference(DC_EXPIRED_FIELD), Operator.LT, new DateLiteral(ZonedDateTime.now(ZoneOffset.UTC))); 
         public static final Expression DC_EXPIRED_NOT_NULL = new Expression(new Reference(DC_EXPIRED_FIELD), Operator.ISNOTNULL, null);
 
         // A SQL Query is made whenever a document listing is shown
