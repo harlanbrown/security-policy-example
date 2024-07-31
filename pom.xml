@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.nuxeo</groupId>
     <artifactId>nuxeo-parent</artifactId>
-    <version>2021.50-SNAPSHOT</version>
+    <version>2021.58.2</version>
   </parent>
 
   <artifactId>security-policy-sample</artifactId>
