@@ -53,6 +53,7 @@ public class TestLifeCycleSecurityPolicy {
 	
     protected DocumentModel doc;
     protected DocumentModel doc2;
+    protected DocumentModel doc3;
 
     @Inject
     protected SecurityPolicyService service;    
@@ -73,6 +74,9 @@ public class TestLifeCycleSecurityPolicy {
     	
     	doc2 = coreSession.createDocumentModel("/", "project", "File");
     	doc2 = coreSession.createDocument(doc2);
+
+    	doc3 = coreSession.createDocumentModel("/", "workspace1", "Workspace");
+    	doc3 = coreSession.createDocument(doc3);
     	
     	coreSession.save();
     }
@@ -112,9 +116,9 @@ public class TestLifeCycleSecurityPolicy {
     public void testTransformer() throws Exception {
     	
     	Transformer t = new LifeCycleTransformer();
-    	SQLQuery p = SQLQueryParser.parse("SELECT * FROM File");
+        SQLQuery p = SQLQueryParser.parse("SELECT * FROM Document");
     	SQLQuery s = t.transform(membersPrincipal, p);
-    	assertTrue(s.toString().contains("ecm:currentLifeCycleState = 'approved'")); 
+    	assertTrue(s.toString().contains("ecm:currentLifeCycleState <> 'approved'")); 
     	
     }
 }

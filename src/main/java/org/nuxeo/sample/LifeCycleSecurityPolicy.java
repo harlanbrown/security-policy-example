@@ -39,16 +39,17 @@ import org.nuxeo.ecm.core.security.SecurityPolicy;
 public class LifeCycleSecurityPolicy extends AbstractSecurityPolicy implements SecurityPolicy {
 
     @Override
-    public Access checkPermission(Document doc, ACP mergedAcp, NuxeoPrincipal principal, String permission,
-            String[] resolvedPermissions, String[] additionalPrincipals) {
+    public Access checkPermission(Document doc, ACP mergedAcp, NuxeoPrincipal principal, String permission, String[] resolvedPermissions, String[] additionalPrincipals) {
 
         String lifeCycle = doc.getLifeCycleState();
 
-        if ( lifeCycle != null ) {
-            // if current lifecycle state is NOT approved
-            if ( !lifeCycle.equals("approved") ) {
-                // DENY access to the item
-                return Access.DENY;
+        if ( doc.getType().getName().equals("File") ) {
+            if ( lifeCycle != null ) {
+                // if current lifecycle state is NOT approved
+                if ( !lifeCycle.equals("approved") ) {
+                    // DENY access to the item
+                    return Access.DENY;
+                }
             }
         }
         return Access.UNKNOWN;
@@ -69,8 +70,10 @@ public class LifeCycleSecurityPolicy extends AbstractSecurityPolicy implements S
         private static final long serialVersionUID = 1L;
 
         // Expressions, we need to check that:
-        // * current lifecycle state is approved
-        public static final Expression APPROVED = new Expression(new Reference("ecm:currentLifeCycleState"), Operator.EQ, new StringLiteral("approved")); 
+        // * document type is File
+        // * current lifecycle state is NOT approved (we're allowed to see the approved ones)
+        public static final Expression IS_FILE = new Expression(new Reference("ecm:primaryType"), Operator.EQ, new StringLiteral("File"));
+        public static final Expression APPROVED = new Expression(new Reference("ecm:currentLifeCycleState"), Operator.NOTEQ, new StringLiteral("approved")); 
 
         // A SQL Query is made whenever a document listing is shown
         // This transformer changes the SQL query so that restricted documents are not shown in results
@@ -83,18 +86,21 @@ public class LifeCycleSecurityPolicy extends AbstractSecurityPolicy implements S
             }
 
             WhereClause where = query.where;
+            Expression expr = new Expression(IS_FILE, Operator.AND, APPROVED);
             Predicate predicate;
 
             // a sql query can have a WHERE clause or not have a WHERE clause
             // if it does not have a WHERE clause we add our new clause using WHERE
             // if it already has a WHERE clause we add our expressions to it
 
+            // in this case we want to filter (don't return) files that are not approved
+
             if (where == null || where.predicate == null) {
-                // add WHERE ecm lifecycle is approved
-                predicate = new Predicate(new Reference("ecm:currentLifeCycleState"), Operator.EQ, new StringLiteral("approved"));
+                // add WHERE NOT primary type is File and ecm lifecycle not approved
+                predicate = new Predicate(expr, Operator.NOT, null);
             } else {
-                // add AND ecm lifecycle is approved to WHERE clause
-                predicate = new Predicate(where.predicate, Operator.AND, new Predicate(new Reference("ecm:currentLifeCycleState"), Operator.EQ, new StringLiteral("approved")));
+                // add AND NOT primary type is File and ecm lifecycle not approved to WHERE clause
+                predicate = new Predicate(where.predicate, Operator.AND, new Predicate(expr, Operator.NOT, null));
             }
 
             return new SQLQuery(query.select, query.from, new WhereClause(predicate), query.groupBy, query.having, query.orderBy, query.limit, query.offset);
