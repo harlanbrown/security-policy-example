@@ -3,6 +3,7 @@
 
   <extension target="org.nuxeo.ecm.core.security.SecurityService" point="policies">
     <policy name="lifecycle" class="org.nuxeo.sample.LifeCycleSecurityPolicy" />
+    <policy name="archived" class="org.nuxeo.sample.ArchivedSecurityPolicy" />
   </extension>
 
 </component>
